@@ -6,6 +6,9 @@ ENV NGINX_VERSION 1.23.0
 ENV NGINX_DEVEL_KIT_VERSION 0.2.19
 ENV NGINX_MODULE_SOURCE https://github.com
 
+ENV NGINX_CACHE_PURGE_MODULE_VERSION=2.5.2
+ENV NGINX_CACHE_PURGE_MODULE_PATH=$NGINX_TEMP_DIR/ngx_cache_purge-$NGINX_CACHE_PURGE_MODULE_VERSION
+
 RUN apt-get update \
     && apt-get install -y ca-certificates libpcre3 libssl-dev libpcre3-dev libgd-dev make wget gcc
 
@@ -20,6 +23,12 @@ RUN  wget "$NGINX_MODULE_SOURCE/simpl/ngx_devel_kit/archive/v$NGINX_DEVEL_KIT_VE
     && mkdir -p /usr/src/nginx/ngx_devel_kit \
     && tar -xof v$NGINX_DEVEL_KIT_VERSION.tar.gz -C /usr/src/nginx/ngx_devel_kit --strip-components=1 \
     && rm v$NGINX_DEVEL_KIT_VERSION.tar.gz
+
+
+RUN wget --no-check-certificate https://github.com/nginx-modules/ngx_cache_purge/archive/$NGINX_CACHE_PURGE_MODULE_VERSION.tar.gz \
+        -O $NGINX_CACHE_PURGE_MODULE_PATH.tar.gz && \
+        tar xzf $NGINX_CACHE_PURGE_MODULE_PATH.tar.gz && \
+        rm $NGINX_CACHE_PURGE_MODULE_PATH.tar.gz
 
 WORKDIR /usr/src/nginx
 
@@ -41,6 +50,7 @@ RUN ./configure \
         --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
         --user=nginx \
         --group=nginx \
+
         --with-http_ssl_module \
         --with-http_realip_module \
         --with-http_addition_module \
@@ -64,6 +74,7 @@ RUN ./configure \
         --with-http_v2_module \
         --with-http_image_filter_module \
         --add-module=/usr/src/nginx/ngx_devel_kit \
+        --add-module=$NGINX_CACHE_PURGE_MODULE_PATH \
     && make -j2 \
     && make install \
     && make clean
