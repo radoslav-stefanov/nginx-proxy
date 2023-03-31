@@ -49,8 +49,8 @@ RUN ./configure \
         --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
         --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
         --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-        --user=nginx \
-        --group=nginx \
+        --user=82 \
+        --group=82 \
 
         --with-http_ssl_module \
         --with-http_realip_module \
@@ -90,6 +90,8 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 VOLUME ["/var/cache/nginx"]
+
+
 
 EXPOSE 80 443
 #
