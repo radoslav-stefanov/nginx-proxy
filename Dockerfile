@@ -34,6 +34,10 @@ WORKDIR /usr/src/nginx
 
 RUN groupadd -g 82 nginx && useradd --no-create-home --uid 82 --gid 82 nginx
 
+RUN mkdir -p /var/cache/nginx /var/log/nginx \
+    && chown -R 82:82 /var/cache/nginx /var/log/nginx \
+    && chmod -R 755 /var/cache/nginx /var/log/nginx
+
 # build
 RUN ./configure \
         --prefix=/etc/nginx \
