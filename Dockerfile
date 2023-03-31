@@ -33,7 +33,7 @@ RUN wget --no-check-certificate https://github.com/nginx-modules/ngx_cache_purge
 
 WORKDIR /usr/src/nginx
 
-RUN useradd --no-create-home nginx
+RUN groupadd -g 82 nginx && useradd --no-create-home --uid 82 --gid 82 nginx
 
 # build
 RUN ./configure \
@@ -49,8 +49,8 @@ RUN ./configure \
         --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
         --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
         --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-        --user=82 \
-        --group=82 \
+        --user=nginx \
+        --group=nginx \
 
         --with-http_ssl_module \
         --with-http_realip_module \
@@ -91,7 +91,7 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 VOLUME ["/var/cache/nginx"]
 
-
+USER 82:82
 
 EXPOSE 80 443
 #
